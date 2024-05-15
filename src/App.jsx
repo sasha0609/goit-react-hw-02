@@ -12,24 +12,16 @@ export default function App() {
     neutral: 0,
     bad: 0,
   });
-  const [showOptions, setShowOptions] = useState(false);
 
   const updateFeedback = (feedbackType) => {
     setFeedbackCounts({
       ...feedbackCounts,
       [feedbackType]: feedbackCounts[feedbackType] + 1,
     });
-    setShowOptions(true);
   };
-  const totalFeedback =
-    feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad;
-  const positiveFeedback = Math.round(
-    (feedbackCounts.good / totalFeedback) * 100
-  );
-
   useEffect(() => {
-    localStorage.setItem("positive-feedback", positiveFeedback);
-  }, [positiveFeedback]);
+    localStorage.setItem("feedbackCounts", JSON.stringify(feedbackCounts));
+  }, [feedbackCounts]);
 
   const shouldRenderReset =
     feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad > 0;
@@ -42,11 +34,9 @@ export default function App() {
         shouldRenderReset={shouldRenderReset}
         setFeedbackCounts={setFeedbackCounts}
       />
-      {feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad > 0 ? (
+      {shouldRenderReset ? (
         <>
           <Feedback feedbackCounts={feedbackCounts} />
-          <p>Total: {totalFeedback}</p>
-          <p>Positive:{positiveFeedback}</p>
         </>
       ) : (
         <Notification />
