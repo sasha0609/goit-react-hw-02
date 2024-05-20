@@ -1,18 +1,10 @@
 export default function Options({
   updateFeedback,
   shouldRenderReset,
-  setFeedbackCounts,
+  handleReset,
 }) {
   const handleUpdate = (type) => {
     updateFeedback(type);
-  };
-
-  const handleReset = () => {
-    setFeedbackCounts({
-      good: 0,
-      neutral: 0,
-      bad: 0,
-    });
   };
 
   return (

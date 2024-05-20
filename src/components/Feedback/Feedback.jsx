@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
-export default function Feedback({ feedbackCounts }) {
-  const totalFeedback =
-    feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad;
-  const positiveFeedback = Math.round(
-    (feedbackCounts.good / totalFeedback) * 100
-  );
+export default function Feedback({
+  feedbackCounts,
+  totalFeedback,
+  positiveFeedback,
+}) {
   useEffect(() => {
     localStorage.setItem("positive-feedback", positiveFeedback);
   }, [positiveFeedback]);
+
   return (
     <>
       <p>good: {feedbackCounts.good}</p>

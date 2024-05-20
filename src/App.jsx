@@ -1,24 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Description from "./components/Description/Description.jsx";
 import Options from "./components/Options/Options.jsx";
 import Feedback from "./components/Feedback/Feedback.jsx";
 import Notification from "./components/Notification/Notification.jsx";
-import { useEffect } from "react";
 
 export default function App() {
-  const [feedbackCounts, setFeedbackCounts] = useState({
+  const initialFeedbackCounts = JSON.parse(
+    localStorage.getItem("feedbackCounts")
+  ) || {
     good: 0,
     neutral: 0,
     bad: 0,
-  });
+  };
+
+  const [feedbackCounts, setFeedbackCounts] = useState(initialFeedbackCounts);
 
   const updateFeedback = (feedbackType) => {
-    setFeedbackCounts({
-      ...feedbackCounts,
-      [feedbackType]: feedbackCounts[feedbackType] + 1,
-    });
+    setFeedbackCounts((prevCounts) => ({
+      ...prevCounts,
+      [feedbackType]: prevCounts[feedbackType] + 1,
+    }));
   };
+
   useEffect(() => {
     localStorage.setItem("feedbackCounts", JSON.stringify(feedbackCounts));
   }, [feedbackCounts]);
@@ -26,18 +30,35 @@ export default function App() {
   const shouldRenderReset =
     feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad > 0;
 
+  const totalFeedback =
+    feedbackCounts.good + feedbackCounts.neutral + feedbackCounts.bad;
+  const positiveFeedback =
+    totalFeedback > 0
+      ? Math.round((feedbackCounts.good / totalFeedback) * 100)
+      : 0;
+
+  const handleReset = () => {
+    setFeedbackCounts({
+      good: 0,
+      neutral: 0,
+      bad: 0,
+    });
+  };
+
   return (
     <>
       <Description />
       <Options
         updateFeedback={updateFeedback}
+        handleReset={handleReset}
         shouldRenderReset={shouldRenderReset}
-        setFeedbackCounts={setFeedbackCounts}
       />
       {shouldRenderReset ? (
-        <>
-          <Feedback feedbackCounts={feedbackCounts} />
-        </>
+        <Feedback
+          feedbackCounts={feedbackCounts}
+          totalFeedback={totalFeedback}
+          positiveFeedback={positiveFeedback}
+        />
       ) : (
         <Notification />
       )}
